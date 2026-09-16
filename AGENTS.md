@@ -14,8 +14,9 @@ changes simple, readable, and easy to verify.
 
 ## Development
 
-Use the Dev Container, run `npm ci`, start PostgreSQL with
-`docker compose up -d`, then run migrations and seed data as described in
+Use the Dev Container or Codespaces. The container starts PostgreSQL, applies
+migrations, seeds an empty database, and runs the app on port 3000. Seed
+skips when users already exist. Manual setup is described in
 `docs/development.md`.
 
 After making changes, run:
