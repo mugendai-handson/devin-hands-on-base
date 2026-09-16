@@ -28,6 +28,7 @@ test("changes a ticket status", async ({ page }) => {
   await page.getByLabel("Status").click();
   await page.getByRole("option", { name: "Done" }).click();
   await page.getByRole("button", { name: "Update status" }).click();
+  await page.reload();
 
   await expect(page.getByText("Done", { exact: true }).first()).toBeVisible();
 });

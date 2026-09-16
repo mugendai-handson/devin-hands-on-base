@@ -11,7 +11,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "dotenv -e .env.test -- npm run dev -- --port 3100",
+    command: "dotenv -e .env.test -o -- npm run dev -- --port 3100",
     url: "http://localhost:3100",
     reuseExistingServer: false,
   },
