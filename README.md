@@ -12,8 +12,14 @@ Major dependencies and `package-lock.json` are committed for repeatable labs.
 
 ## Setup
 
-The recommended setup is the existing Dev Container. It provides Node.js 22,
-Docker, GitHub CLI, and forwards ports 3000 and 5432.
+The recommended setup is the existing Dev Container or GitHub Codespaces.
+It provides Node.js 22, Docker, GitHub CLI, and forwards ports 3000 and 5432.
+
+When the container starts, it installs dependencies, starts PostgreSQL,
+applies migrations, seeds an empty database, and starts the app. Open
+http://localhost:3000 after the preview appears.
+
+To start the same stack by hand:
 
 ```bash
 cp .env.example .env
@@ -23,8 +29,6 @@ npm run db:migrate
 npm run db:seed
 npm run dev
 ```
-
-Open http://localhost:3000.
 
 To create a migration after changing the schema:
 

@@ -2,6 +2,13 @@
 
 ## Setup and database
 
+A Dev Container or Codespaces workspace starts PostgreSQL, applies
+migrations, seeds an empty database, and runs `npm run dev` on port 3000.
+Seed data is added only when the `User` table is empty, so later starts keep
+local changes.
+
+To start the same stack by hand:
+
 ```bash
 cp .env.example .env
 npm ci

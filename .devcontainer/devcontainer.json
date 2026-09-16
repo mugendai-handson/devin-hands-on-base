@@ -19,8 +19,9 @@
       "onAutoForward": "silent"
     }
   },
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y jq && cp -n .env.example .env || true && npm ci",
-  "postStartCommand": "docker compose up -d",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "waitFor": "postStartCommand",
   "customizations": {
     "vscode": {
       "extensions": [
