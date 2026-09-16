@@ -4,10 +4,14 @@
 
 A Dev Container or Codespaces workspace starts PostgreSQL, applies
 migrations, seeds an empty database, and runs `npm run dev` on port 3000.
-Seed data is added only when the `User` table is empty, so later starts keep
-local changes.
+`npm run db:seed` inserts sample data only when the `User` table is empty, so
+later starts keep local changes. To replace that data, run
+`npx prisma migrate reset`.
 
-To start the same stack by hand:
+The auto-started app writes logs to `/tmp/next-dev.log`. If
+http://localhost:3000 already responds, do not start a second `npm run dev`.
+
+To start the same stack by hand on a host without the Dev Container:
 
 ```bash
 cp .env.example .env
