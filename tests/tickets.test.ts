@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   countTicketsByStatus,
+  parseTicketId,
   ticketSchema,
-  withTicketStatus,
+  ticketStatuses,
 } from "@/lib/tickets";
 
 const validTicket = {
@@ -35,12 +36,12 @@ describe("ticket business logic", () => {
     ).toBe(false);
   });
 
-  it("allows status to change freely", () => {
-    const done = withTicketStatus(validTicket, "DONE");
-    const reopened = withTicketStatus(done, "OPEN");
-
-    expect(done.status).toBe("DONE");
-    expect(reopened.status).toBe("OPEN");
+  it("accepts every supported status", () => {
+    for (const status of ticketStatuses) {
+      expect(ticketSchema.safeParse({ ...validTicket, status }).success).toBe(
+        true,
+      );
+    }
   });
 
   it("rejects unknown enum values", () => {
@@ -50,5 +51,12 @@ describe("ticket business logic", () => {
     expect(
       ticketSchema.safeParse({ ...validTicket, status: "BLOCKED" }).success,
     ).toBe(false);
+  });
+
+  it("accepts only canonical PostgreSQL integer IDs", () => {
+    expect(parseTicketId("1")).toBe(1);
+    expect(parseTicketId("01")).toBeNull();
+    expect(parseTicketId("1e3")).toBeNull();
+    expect(parseTicketId("2147483648")).toBeNull();
   });
 });

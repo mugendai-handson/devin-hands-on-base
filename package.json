@@ -15,7 +15,7 @@
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:test:prepare": "dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- prisma db seed",
+    "db:test:prepare": "dotenv -e .env.test -o -- prisma migrate reset --force && dotenv -e .env.test -o -- prisma db seed",
     "postinstall": "prisma generate"
   },
   "dependencies": {

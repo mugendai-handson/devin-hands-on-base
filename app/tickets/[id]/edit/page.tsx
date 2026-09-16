@@ -3,6 +3,7 @@ import { updateTicket } from "@/app/tickets/actions";
 import { TicketForm } from "@/components/ticket-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { parseTicketId } from "@/lib/tickets";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +12,9 @@ export default async function EditTicketPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const id = Number((await params).id);
+  const id = parseTicketId((await params).id);
 
-  if (!Number.isInteger(id)) {
+  if (id === null) {
     notFound();
   }
 

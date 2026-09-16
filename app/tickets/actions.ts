@@ -4,12 +4,43 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { parseTicketFormData, ticketStatuses } from "@/lib/tickets";
+import {
+  parseTicketFormData,
+  type TicketInput,
+  ticketStatuses,
+} from "@/lib/tickets";
 
 export type TicketActionState = {
-  errors?: Record<string, string[] | undefined>;
+  errors?: Partial<Record<keyof TicketInput, string[]>>;
   message?: string;
 };
+
+function getPrismaErrorCode(error: unknown) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+  ) {
+    return error.code;
+  }
+
+  return null;
+}
+
+function databaseError(error: unknown): TicketActionState {
+  console.error("Ticket operation failed:", error);
+
+  if (getPrismaErrorCode(error) === "P2003") {
+    return { message: "The selected assignee or project no longer exists." };
+  }
+
+  if (getPrismaErrorCode(error) === "P2025") {
+    return { message: "This ticket no longer exists." };
+  }
+
+  return { message: "Unable to save the ticket. Please try again." };
+}
 
 export async function createTicket(
   _previousState: TicketActionState,
@@ -21,9 +52,15 @@ export async function createTicket(
     return { errors: result.error.flatten().fieldErrors };
   }
 
-  const ticket = await prisma.ticket.create({ data: result.data });
-  revalidatePath("/");
-  revalidatePath("/tickets");
+  let ticket;
+
+  try {
+    ticket = await prisma.ticket.create({ data: result.data });
+  } catch (error) {
+    return databaseError(error);
+  }
+
+  revalidatePath("/", "layout");
   redirect(`/tickets/${ticket.id}`);
 }
 
@@ -38,25 +75,36 @@ export async function updateTicket(
     return { errors: result.error.flatten().fieldErrors };
   }
 
-  await prisma.ticket.update({ where: { id }, data: result.data });
-  revalidatePath("/");
-  revalidatePath("/tickets");
-  revalidatePath(`/tickets/${id}`);
+  try {
+    await prisma.ticket.update({ where: { id }, data: result.data });
+  } catch (error) {
+    return databaseError(error);
+  }
+
+  revalidatePath("/", "layout");
   redirect(`/tickets/${id}`);
 }
 
-export async function changeTicketStatus(id: number, formData: FormData) {
+export async function changeTicketStatus(
+  id: number,
+  _previousState: TicketActionState,
+  formData: FormData,
+): Promise<TicketActionState> {
   const result = z.enum(ticketStatuses).safeParse(formData.get("status"));
 
   if (!result.success) {
-    return;
+    return { message: "Choose a valid status." };
   }
 
-  await prisma.ticket.update({
-    where: { id },
-    data: { status: result.data },
-  });
-  revalidatePath("/");
-  revalidatePath("/tickets");
-  revalidatePath(`/tickets/${id}`);
+  try {
+    await prisma.ticket.update({
+      where: { id },
+      data: { status: result.data },
+    });
+  } catch (error) {
+    return databaseError(error);
+  }
+
+  revalidatePath("/", "layout");
+  return {};
 }

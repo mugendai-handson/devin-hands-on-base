@@ -52,11 +52,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
-* {
-  border-color: var(--border);
-}
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
 }

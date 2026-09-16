@@ -42,6 +42,17 @@ export const ticketSchema = z.object({
 
 export type TicketInput = z.infer<typeof ticketSchema>;
 
+const MAX_DATABASE_ID = 2_147_483_647;
+
+export function parseTicketId(value: string) {
+  if (!/^[1-9]\d*$/.test(value)) {
+    return null;
+  }
+
+  const id = Number(value);
+  return id <= MAX_DATABASE_ID ? id : null;
+}
+
 export function countTicketsByStatus(
   tickets: ReadonlyArray<{ status: TicketStatus }>,
 ) {
@@ -52,13 +63,6 @@ export function countTicketsByStatus(
     },
     { OPEN: 0, IN_PROGRESS: 0, DONE: 0 },
   );
-}
-
-export function withTicketStatus<T extends { status: TicketStatus }>(
-  ticket: T,
-  status: TicketStatus,
-) {
-  return { ...ticket, status };
 }
 
 export function parseTicketFormData(formData: FormData) {

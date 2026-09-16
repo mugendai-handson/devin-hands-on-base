@@ -19,7 +19,7 @@
       "onAutoForward": "silent"
     }
   },
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y jq && cp -n .env.example .env || true && npm install",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y jq && cp -n .env.example .env || true && npm ci",
   "postStartCommand": "docker compose up -d",
   "customizations": {
     "vscode": {

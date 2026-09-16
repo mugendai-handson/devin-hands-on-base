@@ -13,6 +13,7 @@ export default async function NewTicketPage() {
       orderBy: { name: "asc" },
     }),
   ]);
+  const setupRequired = users.length === 0 || projects.length === 0;
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -22,15 +23,22 @@ export default async function NewTicketPage() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Ticket details</CardTitle>
+          <CardTitle>{setupRequired ? "Setup required" : "Ticket details"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <TicketForm
-            action={createTicket}
-            users={users}
-            projects={projects}
-            submitLabel="Create ticket"
-          />
+          {setupRequired ? (
+            <p className="text-sm text-muted-foreground">
+              Add at least one user and project first. For the hands-on seed
+              data, run npm run db:seed.
+            </p>
+          ) : (
+            <TicketForm
+              action={createTicket}
+              users={users}
+              projects={projects}
+              submitLabel="Create ticket"
+            />
+          )}
         </CardContent>
       </Card>
     </div>

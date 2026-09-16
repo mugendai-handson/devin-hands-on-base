@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { prisma } from "@/lib/prisma";
+import { parseTicketId } from "@/lib/tickets";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +23,9 @@ export default async function TicketDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const id = Number((await params).id);
+  const id = parseTicketId((await params).id);
 
-  if (!Number.isInteger(id)) {
+  if (id === null) {
     notFound();
   }
 

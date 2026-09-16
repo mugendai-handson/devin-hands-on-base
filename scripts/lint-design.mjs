@@ -4,8 +4,8 @@ const eslint = new ESLint();
 const results = await eslint.lintFiles(["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"]);
 const designResults = results
   .map((result) => {
-    const messages = result.messages.filter((message) =>
-      message.ruleId?.startsWith("shadcn/"),
+    const messages = result.messages.filter(
+      (message) => message.fatal || message.ruleId?.startsWith("shadcn/"),
     );
     return {
       ...result,
